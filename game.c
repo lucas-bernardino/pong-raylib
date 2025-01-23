@@ -21,30 +21,8 @@ typedef struct Ball{
   void (*update_ball)(struct Ball* ball);
 } Ball;
 
-void drawBall(Ball* ball) {
-  DrawCircle(ball->x_pos, ball->y_pos, ball->radius, RED);
-}
-
-void updateBall(Ball* ball) {
-  ball->x_pos = ball->x_pos + ball->x_speed * GetFrameTime();
-  ball->y_pos = ball->y_pos + ball->y_speed * GetFrameTime();
-
-  if (ball->y_pos + ball->radius >= window_height || ball->y_pos - ball->radius <= 0) {
-    ball->y_speed *= -1;
-  }
-  if (ball->x_pos + ball->radius >= window_width) {
-    ball->x_speed *= -1;
-    player_score++;
-    ball->x_pos = window_width / 2;
-    ball->y_pos = window_height / 2;
-  }
-  if (ball->x_pos - ball->radius <= 0) {
-    ball->x_speed *= -1;
-    cpu_score++;
-    ball->x_pos = window_width / 2;
-    ball->y_pos = window_height / 2;
-  }
-}
+void drawBall(Ball* ball);
+void updateBall(Ball* ball);
 
 typedef struct Paddle {
 
@@ -58,38 +36,9 @@ typedef struct Paddle {
   bool is_cpu;
 } Paddle;
 
-void drawPaddle(Paddle* paddle) {
-  DrawRectangle(paddle->x_pos, paddle->y_pos, paddle->width, paddle->height, YELLOW);
-}
 
-void updatePaddle(Paddle* paddle, Ball* ball) {
-  assert(paddle);
-
-  if (paddle->is_cpu == false) {
-    if (IsKeyDown(KEY_UP)) {
-      paddle->y_pos = paddle->y_pos - paddle->speed * GetFrameTime();
-    }
-    if (IsKeyDown(KEY_DOWN)) {
-      paddle->y_pos = paddle->y_pos + paddle->speed * GetFrameTime();
-    }
-  } else {
-    assert(ball);
-
-    if (paddle->y_pos + paddle->height/2 > ball->y_pos) {
-      paddle->y_pos = paddle->y_pos - paddle->speed * GetFrameTime();
-    } else {
-      paddle->y_pos = paddle->y_pos + paddle->speed * GetFrameTime();
-    }
-  }
-  
-  if (paddle->y_pos <= 0) {
-    paddle->y_pos = 0;
-  }
-  if (paddle->y_pos + paddle->height >= window_height) {
-    paddle->y_pos = window_height - paddle->height;
-  }
-  
-}
+void drawPaddle(Paddle* paddle);
+void updatePaddle(Paddle* paddle, Ball* ball);
 
 int main(int argc, char *argv[]) {
   InitWindow(window_width, window_height, "First window");
@@ -153,7 +102,63 @@ int main(int argc, char *argv[]) {
   }
 
   CloseWindow();
-  
-  printf("Hello there, mate!"); 
   return 0;
+}
+
+void drawBall(Ball* ball) {
+  DrawCircle(ball->x_pos, ball->y_pos, ball->radius, RED);
+}
+
+void updateBall(Ball* ball) {
+  ball->x_pos = ball->x_pos + ball->x_speed * GetFrameTime();
+  ball->y_pos = ball->y_pos + ball->y_speed * GetFrameTime();
+
+  if (ball->y_pos + ball->radius >= window_height || ball->y_pos - ball->radius <= 0) {
+    ball->y_speed *= -1;
+  }
+  if (ball->x_pos + ball->radius >= window_width) {
+    ball->x_speed *= -1;
+    player_score++;
+    ball->x_pos = window_width / 2;
+    ball->y_pos = window_height / 2;
+  }
+  if (ball->x_pos - ball->radius <= 0) {
+    ball->x_speed *= -1;
+    cpu_score++;
+    ball->x_pos = window_width / 2;
+    ball->y_pos = window_height / 2;
+  }
+}
+
+void drawPaddle(Paddle* paddle) {
+  DrawRectangle(paddle->x_pos, paddle->y_pos, paddle->width, paddle->height, YELLOW);
+}
+
+void updatePaddle(Paddle* paddle, Ball* ball) {
+  assert(paddle);
+
+  if (paddle->is_cpu == false) {
+    if (IsKeyDown(KEY_UP)) {
+      paddle->y_pos = paddle->y_pos - paddle->speed * GetFrameTime();
+    }
+    if (IsKeyDown(KEY_DOWN)) {
+      paddle->y_pos = paddle->y_pos + paddle->speed * GetFrameTime();
+    }
+  } else {
+    assert(ball);
+
+    if (paddle->y_pos + paddle->height/2 > ball->y_pos) {
+      paddle->y_pos = paddle->y_pos - paddle->speed * GetFrameTime();
+    } else {
+      paddle->y_pos = paddle->y_pos + paddle->speed * GetFrameTime();
+    }
+  }
+  
+  if (paddle->y_pos <= 0) {
+    paddle->y_pos = 0;
+  }
+  if (paddle->y_pos + paddle->height >= window_height) {
+    paddle->y_pos = window_height - paddle->height;
+  }
+  
 }
